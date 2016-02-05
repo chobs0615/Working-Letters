@@ -69,7 +69,8 @@ set mouse=v
 
 "colorschemes
 set t_Co=256
-colorscheme jellybeans
+"colorscheme jellybeans
+autocmd Syntax c,cpp,h colorscheme jellybeans
 
 "airLine
 "colorscheme landscape
