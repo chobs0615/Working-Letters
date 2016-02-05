@@ -1,0 +1,99 @@
+execute pathogen#infect()
+
+syntax on
+"back on final position when it opened.
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \ exe "normal g'\"" |
+  \ endif
+
+"search ignorecase
+set ic
+
+"show number
+set nu
+
+"set keyword
+set hls
+
+"set auto indentation
+set ai
+
+"display the line for cursor
+set cursorline
+
+"set tab & shift step is 4, using space replace tab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+
+"set omni-compleetion
+filetype plugin indent on
+set completeopt=longest,menu
+imap <f8> <C-X><C-O>
+imap <f7> <C-X><C-I>
+
+"shortcat
+nnoremap <f9> :TlistToggle<CR>
+nnoremap <f10> :wincmd p<CR>
+
+"Note, automatically sets foldmethod in the syntax file
+autocmd Syntax c,cpp,h setlocal foldmethod=syntax
+"When opening the file do not fold function, enable zR
+autocmd Syntax c,cpp,h normal zR
+"fold shortcat
+nnoremap <f11> za
+
+
+"show status line
+set laststatus=2
+"set statusline=%4*%<\%m%<[%f\%r%h%w]\ [%{&ff},%{&fileencoding},%Y]%=\[Position=%l,%v,%p%%]
+"set statusline=%4*%<\%m%<[%f\%r%h%w]\ %=\[Position=%l,%v,%p%%]
+
+"Automatically remove trailing whitespace
+function RemoveTrailingWhitespace()
+    if &ft != "diff"
+        let b:curcol = col(".")
+        let b:curline = line(".")
+        silent! %s/\s\+$//
+        silent! %s/\(\s*\n\)\+\%$//
+        call cursor(b:curline, b:curcol)
+    endif
+endfunction
+autocmd BufWritePre * call RemoveTrailingWhitespace()
+
+set clipboard=unnamedplus
+inoremap <S-Insert> <ESC>:setl paste<CR>gi<C-R>+<ESC>:setl nopaste<CR>gi
+set mouse=v
+
+"colorschemes
+set t_Co=256
+colorscheme jellybeans
+
+"airLine
+"colorscheme landscape
+let g:airline_theme="wombat"
+let g:airline_left_sep = ''
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_sep = ''
+let g:airline_linecolumn_prefix = ''
+let g:airline_linecolumn_prefix = ''
+let g:airline_linecolumn_prefix = ''
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#syntastic#enabled = 0
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#csv#enabled = 0
+let g:airline#extensions#hunks#enabled = 0
+let g:airline#extensions#virtualenv#enabled = 1
+
+let g:airline_theme_patch_func = 'AirlineThemePatch'
+function! AirlineThemePatch(palette)
+    if g:airline_theme == 'wombat'
+        for colors in values(a:palette.inactive)
+            let colors[3] = 235
+        endfor
+    endif
+endfunction
