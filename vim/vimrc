@@ -22,6 +22,9 @@ set ai
 "display the line for cursor
 set cursorline
 
+"set column line boundary
+set colorcolumn=81
+
 "set tab & shift step is 4, using space replace tab
 set tabstop=4
 set softtabstop=4
@@ -35,7 +38,8 @@ imap <f8> <C-X><C-O>
 imap <f7> <C-X><C-I>
 
 "shortcat
-nnoremap <f9> :TlistToggle<CR>
+"nnoremap <f9> :TlistToggle<CR>
+nnoremap <F9> :TagbarToggle<CR>
 nnoremap <f10> :wincmd p<CR>
 
 "Note, automatically sets foldmethod in the syntax file
@@ -69,8 +73,16 @@ set mouse=v
 
 "colorschemes
 set t_Co=256
-"colorscheme jellybeans
-autocmd Syntax c,cpp,h colorscheme jellybeans
+colorscheme jellybeans
+"autocmd Syntax c,cpp,h colorscheme jellybeans
+
+"tarbar
+let g:tagbar_left = 1
+
+" Pathogen load
+let g:pymode_python = 'python3'
+let g:pymode_folding = 0
+" Pathogen load end
 
 "airLine
 "colorscheme landscape
@@ -89,6 +101,8 @@ let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#csv#enabled = 0
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#virtualenv#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_section_x = '%{strftime("%c")}'
 
 let g:airline_theme_patch_func = 'AirlineThemePatch'
 function! AirlineThemePatch(palette)
