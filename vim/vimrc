@@ -84,6 +84,14 @@ let g:pymode_python = 'python3'
 let g:pymode_folding = 0
 " Pathogen load end
 
+"tarbar
+let g:tagbar_left = 1
+
+" Pathogen load
+let g:pymode_python = 'python3'
+let g:pymode_folding = 0
+" Pathogen load end
+
 "airLine
 "colorscheme landscape
 let g:airline_theme="wombat"
@@ -102,7 +110,16 @@ let g:airline#extensions#csv#enabled = 0
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
 let g:airline_section_x = '%{strftime("%c")}'
+nnoremap 11 :tabn 1<CR>
+nnoremap 22 :tabn 2<CR>
+nnoremap 33 :tabn 3<CR>
+nnoremap 44 :tabn 4<CR>
+nnoremap 55 :tabn 5<CR>
+nnoremap 66 :tabn 6<CR>
 
 let g:airline_theme_patch_func = 'AirlineThemePatch'
 function! AirlineThemePatch(palette)
