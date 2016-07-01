@@ -49,7 +49,6 @@ autocmd Syntax c,cpp,h normal zR
 "fold shortcat
 nnoremap <f11> za
 
-
 "show status line
 set laststatus=2
 "set statusline=%4*%<\%m%<[%f\%r%h%w]\ [%{&ff},%{&fileencoding},%Y]%=\[Position=%l,%v,%p%%]
@@ -67,6 +66,28 @@ function RemoveTrailingWhitespace()
 endfunction
 autocmd BufWritePre * call RemoveTrailingWhitespace()
 
+"Automatically update tags, when writebuffer.
+set tags=.tags,tags
+let db = findfile(".cscope.out", ".;")
+if (!empty(db))
+    :silent cscope add .cscope.out
+endif
+
+function UpdateTags()
+    let db = findfile(".cscope.out", ".;")
+    let cmd = 'rm .tags .cscope*'
+    let resp = system(cmd)
+    let cmd = 'ctags -R -f .tags'
+    let resp = system(cmd)
+    let cmd = 'cscope -Rbkq -f .cscope.out'
+    let resp = system(cmd)
+    if (empty(db))
+        :silent cscope add .cscope.out
+    endif
+    :silent cs reset
+endfunction
+autocmd BufWritePost *.cpp,*.h,*.c,*.hpp call UpdateTags()
+
 set clipboard=unnamedplus
 inoremap <S-Insert> <ESC>:setl paste<CR>gi<C-R>+<ESC>:setl nopaste<CR>gi
 set mouse=v
@@ -75,14 +96,6 @@ set mouse=v
 set t_Co=256
 colorscheme jellybeans
 "autocmd Syntax c,cpp,h colorscheme jellybeans
-
-"tarbar
-let g:tagbar_left = 1
-
-" Pathogen load
-let g:pymode_python = 'python3'
-let g:pymode_folding = 0
-" Pathogen load end
 
 "tarbar
 let g:tagbar_left = 1
