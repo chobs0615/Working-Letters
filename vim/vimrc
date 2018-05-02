@@ -1,4 +1,14 @@
-execute pathogen#infect()
+call plug#begin('~/.vim/plugged')
+" Plug 'Valloric/YouCompleteMe'
+Plug 'jiangmiao/auto-pairs' "自动括号匹配
+Plug 'nanotech/jellybeans.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'majutsushi/tagbar'
+Plug 'chazy/cscope_maps'
+Plug 'yqking/visualmark'
+Plug 'Yggdroot/indentLine'
+call plug#end()
 
 syntax on
 "back on final position when it opened.
@@ -6,6 +16,8 @@ autocmd BufReadPost *
   \ if line("'\"") > 0 && line ("'\"") <= line("$") |
   \ exe "normal g'\"" |
   \ endif
+
+let g:indentLine_char = '┊'
 
 "search ignorecase
 set ic
@@ -31,17 +43,6 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 
-"set omni-compleetion
-filetype plugin indent on
-set completeopt=longest,menu
-imap <f8> <C-X><C-O>
-imap <f7> <C-X><C-I>
-
-"shortcat
-"nnoremap <f9> :TlistToggle<CR>
-nnoremap <F9> :TagbarToggle<CR>
-nnoremap <f10> :wincmd p<CR>
-
 "Note, automatically sets foldmethod in the syntax file
 autocmd Syntax c,cpp,h setlocal foldmethod=syntax
 "When opening the file do not fold function, enable zR
@@ -49,10 +50,26 @@ autocmd Syntax c,cpp,h normal zR
 "fold shortcat
 nnoremap <f11> za
 
-"show status line
-set laststatus=2
-"set statusline=%4*%<\%m%<[%f\%r%h%w]\ [%{&ff},%{&fileencoding},%Y]%=\[Position=%l,%v,%p%%]
-"set statusline=%4*%<\%m%<[%f\%r%h%w]\ %=\[Position=%l,%v,%p%%]
+"set omni-compleetion
+filetype plugin indent on
+set completeopt=longest,menu
+imap <f8> <C-X><C-O>
+imap <f7> <C-X><C-I>
+
+"tagbar
+let g:tagbar_left = 1
+nnoremap <F9> :TagbarToggle<CR>
+nnoremap <f10> :wincmd p<CR>
+
+"trans to utf8
+let $LANG="zh_CN.UTF-8"
+set fileencodings=utf-8,gb18030,gbk,gb2312,big5
+set termencoding=utf-8
+set fileencoding=utf-8
+set encoding=utf-8
+
+set nocompatible
+set backspace=indent,eol,start
 
 "Automatically remove trailing whitespace
 function RemoveTrailingWhitespace()
@@ -75,7 +92,9 @@ endif
 
 function UpdateTags()
     let db = findfile(".cscope.out", ".;")
-    let cmd = 'rm .tags .cscope*'
+    let cmd = 'rm .tags .cscope* tag cscope*'
+    let resp = system(cmd)
+    let cmd = 'find . -name "*.[c|h]" -o -name "*.cpp" > .cscope.files'
     let resp = system(cmd)
     let cmd = 'ctags -R -f .tags'
     let resp = system(cmd)
@@ -86,24 +105,20 @@ function UpdateTags()
     endif
     :silent cs reset
 endfunction
-autocmd BufWritePost *.cpp,*.h,*.c,*.hpp call UpdateTags()
-
-set clipboard=unnamedplus
-inoremap <S-Insert> <ESC>:setl paste<CR>gi<C-R>+<ESC>:setl nopaste<CR>gi
-set mouse=v
+"autocmd BufWritePost *.cpp,*.h,*.c,*.hpp call UpdateTags()
+nnoremap <F5> :call UpdateTags()<CR>
 
 "colorschemes
 set t_Co=256
 colorscheme jellybeans
-"autocmd Syntax c,cpp,h colorscheme jellybeans
 
-"tarbar
-let g:tagbar_left = 1
-
-" Pathogen load
-let g:pymode_python = 'python3'
-let g:pymode_folding = 0
-" Pathogen load end
+" toggle Pagination
+nnoremap 11 :tabn 1<CR>
+nnoremap 22 :tabn 2<CR>
+nnoremap 33 :tabn 3<CR>
+nnoremap 44 :tabn 4<CR>
+nnoremap 55 :tabn 5<CR>
+nnoremap 66 :tabn 6<CR>
 
 "airLine
 "colorscheme landscape
@@ -127,18 +142,3 @@ let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
 let g:airline_section_x = '%{strftime("%c")}'
-nnoremap 11 :tabn 1<CR>
-nnoremap 22 :tabn 2<CR>
-nnoremap 33 :tabn 3<CR>
-nnoremap 44 :tabn 4<CR>
-nnoremap 55 :tabn 5<CR>
-nnoremap 66 :tabn 6<CR>
-
-let g:airline_theme_patch_func = 'AirlineThemePatch'
-function! AirlineThemePatch(palette)
-    if g:airline_theme == 'wombat'
-        for colors in values(a:palette.inactive)
-            let colors[3] = 235
-        endfor
-    endif
-endfunction
