@@ -1,3 +1,14 @@
+"                (nothing) In a function: local to a function; otherwise: global
+"buffer-variable    b:     Local to the current buffer.
+"window-variable    w:     Local to the current window.
+"tabpage-variable   t:     Local to the current tab page.
+"global-variable    g:     Global.
+"local-variable     l:     Local to a function.
+"script-variable    s:     Local to a :source'ed Vim script.
+"function-argument  a:     Function argument (only inside a function).
+"vim-variable       v:     Global, predefined by Vim.
+"see more in :help internal-variables
+
 call plug#begin('~/.vim/plugged')
 " Plug 'Valloric/YouCompleteMe'
 Plug 'jiangmiao/auto-pairs' "自动括号匹配
@@ -8,6 +19,8 @@ Plug 'majutsushi/tagbar'
 Plug 'chazy/cscope_maps'
 Plug 'yqking/visualmark'
 Plug 'Yggdroot/indentLine'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'wsdjeg/FlyGrep.vim'
 call plug#end()
 
 syntax on
@@ -84,31 +97,58 @@ endfunction
 autocmd BufWritePre * call RemoveTrailingWhitespace()
 
 "Automatically update tags, when writebuffer.
-set tags=.tags,tags
-let db = findfile(".cscope.out", ".;")
-if (!empty(db))
+"set tags=.tags,tags
+let g:db = findfile(".cscope.out", ".;")
+if (!empty(g:db))
     :silent cscope add .cscope.out
 endif
 
-function UpdateTags()
-    let db = findfile(".cscope.out", ".;")
-    let cmd = 'rm .tags .cscope* tag cscope*'
-    let resp = system(cmd)
-    let cmd = 'find . -name "*.[c|h]" -o -name "*.cpp" > .cscope.files'
-    let resp = system(cmd)
-    let cmd = 'ctags -R -f .tags'
-    let resp = system(cmd)
-    let cmd = 'cscope -Rbkq -f .cscope.out'
-    let resp = system(cmd)
-    if (empty(db))
+"function! g:UpdateTags()
+"    let db = findfile(".cscope.out", ".;")
+"    let cmd = 'rm .tags .cscope* tag cscope*'
+"    let resp = system(cmd)
+"    let cmd = 'find . -name "*.[c|h]" -o -name "*.cpp" > .cscope.files'
+"    let resp = system(cmd)
+"    let cmd = 'ctags -R -f .tags'
+"    let resp = system(cmd)
+"    let cmd = 'cscope -Rbkq -f .cscope.out'
+"    let resp = system(cmd)
+"    if (empty(db))
+"        :silent cscope add .cscope.out
+"    endif
+"    :silent cs reset
+"endfunction
+"autocmd BufWritePost *.cpp,*.h,*.c,*.hpp call UpdateTags()
+"nnoremap <F5> :call UpdateTags()<CR>
+
+function! s:callback_Create_Done(channel)
+    if (empty(g:db))
         :silent cscope add .cscope.out
+        let g:db = findfile(".cscope.out", ".;")
+        sleep 1
     endif
     :silent cs reset
-endfunction
-"autocmd BufWritePost *.cpp,*.h,*.c,*.hpp call UpdateTags()
-nnoremap <F5> :call UpdateTags()<CR>
+    echo "Re-Build Tags Done!!!!!"
+endfunc
 
-"colorschemes
+function! g:UpdateTags2()
+    let job = job_start(['/bin/sh', '-c', 'tagList.sh'], {"close_cb": function("s:callback_Create_Done")})
+endfunc
+
+noremap <F5> :call UpdateTags2()<CR>
+
+" FlyGrep an search tool
+" List of searching tools will be used 'ag', 'rg', 'grep', 'pt', 'ack'
+" Using rg and add following message to "autoload/SpaceVim/mapping/search.vim" rg part
+" \ '-g', '!.svn',
+" \ '-g', '!.tags',
+" \ '-g', '!.cscope*',
+let g:spacevim_commandline_prompt = '==>'
+let g:FlyGrep_search_tools = 'g' " using ripgrep (rg)
+let g:FlyGrep_input_delay = 1800
+noremap <F6> :FlyGrep<CR>
+
+" colorschemes
 set t_Co=256
 colorscheme jellybeans
 
