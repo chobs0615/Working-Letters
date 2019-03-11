@@ -1,2 +1,5 @@
-docker build -t develop_env .
-docker run -it develop_env
+HOW TO USE
+==================
+
+    docker build -t develop_env .
+    docker run -it develop_env 
