@@ -9,6 +9,12 @@
 "vim-variable       v:     Global, predefined by Vim.
 "see more in :help internal-variables
 
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 call plug#begin('~/.vim/plugged')
 " Plug 'Valloric/YouCompleteMe'
 Plug 'jiangmiao/auto-pairs' "自动括号匹配
@@ -149,8 +155,10 @@ let g:FlyGrep_input_delay = 1800
 noremap <F6> :FlyGrep<CR>
 
 " colorschemes
-set t_Co=256
-colorscheme jellybeans
+if !empty(glob('~/.vim/plugged/jellybeans.vim/colors/jellybeans.vim'))
+    set t_Co=256
+    colorscheme jellybeans
+endif
 
 " toggle Pagination
 nnoremap 11 :tabn 1<CR>
