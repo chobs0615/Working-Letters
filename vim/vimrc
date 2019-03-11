@@ -27,6 +27,8 @@ Plug 'yqking/visualmark'
 Plug 'Yggdroot/indentLine'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'wsdjeg/FlyGrep.vim'
+Plug 'iamcco/mathjax-support-for-mkdp'
+Plug 'iamcco/markdown-preview.vim'
 call plug#end()
 
 syntax on
